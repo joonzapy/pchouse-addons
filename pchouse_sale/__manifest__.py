@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "pchouse_account",
+    'name': "pchouse_sale",
 
     'summary': """
-        Muestra el total del costo en la lista de facturas de cliente""",
+        Desbloquea el campo 'precio unitario' en el presupuesto/pedido de venta.""",
 
     'description': """
         Long description of module's purpose
@@ -15,17 +15,16 @@
     # Categories can be used to filter modules in modules listing
     # Check https://github.com/odoo/odoo/blob/14.0/odoo/addons/base/data/ir_module_category_data.xml
     # for the full list
-    'category': 'Account',
+    'category': 'Sale',
     'version': '14.0',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'account'],
+    'depends': ['base', 'sale', 'product'],
 
     # always loaded
     'data': [
-        'data/account_groups.xml',
         'security/ir.model.access.csv',
-        'views/account_move_views.xml',
-        'views/account_invoice_report_views.xml'
+        'views/sale_order_line_views.xml',
+        'views/product_pricelist_views.xml'
     ],
 }
