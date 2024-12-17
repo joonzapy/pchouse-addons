@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_stamping_user,access_stamping_user,model_talonario_py_timbrado,base.group_user,1,1,1,1
+access_account_move_user,access_account_move_user,model_account_move,base.group_user,1,1,1,1

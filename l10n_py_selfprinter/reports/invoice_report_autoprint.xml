@@ -1,0 +1,541 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="paperformat_factura" model="report.paperformat">
+            <field name="name">Factura A4 Vertical</field>
+            <field name="default" eval="True"/>
+            <field name="format">A4</field>
+            <field name="page_height">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">10</field>
+            <field name="margin_bottom">0</field>
+            <field name="margin_left">10</field>
+            <field name="margin_right">0</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">0</field>
+            <field name="dpi">90</field>
+        </record>
+
+        <record id="action_report_invoice_autoprint" model="ir.actions.report">
+            <field name="name">Factura Autoimpresor</field>
+            <field name="model">account.move</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="paperformat_id" ref="l10n_py_selfprinter.paperformat_factura" />
+            <field name="report_name">l10n_py_selfprinter.report_invoice_autoprint</field>
+            <field name="report_file">l10n_py_selfprinter.report_invoice_autoprint</field>
+            <field name="print_report_name">'Factura - %s' % (object.name)</field>
+            <field name="binding_model_id" ref="account.model_account_move"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <template id="report_invoice_document_autoprint">
+            <t t-set="o" t-value="o.with_context(lang=es_MX)"/>
+            <t t-set="state_count" t-value="o.amount_text"/>
+            <style>
+                * {
+                margin:0;
+                padding:0;
+                }
+                h1 {
+                color: #231F20;
+                font-family:Arial, sans-serif;
+                font-style: normal;
+                font-weight: bold;
+                text-decoration: none;
+                font-size: 11pt;
+                text-align: left;
+                }
+                .s1 {
+                color: #231F20;
+                font-family:Arial, sans-serif;
+                font-style: normal;
+                font-weight: normal;
+                text-decoration: none;
+                font-size: 8pt;
+                }
+                h3 {
+                color: #231F20;
+                font-family:Arial, sans-serif;
+                font-style: normal;
+                font-weight: bold;
+                text-decoration: none;
+                font-size: 8pt;
+                text-align: left;
+                }
+                a {
+                color: #231F20;
+                font-family:Arial, sans-serif;
+                font-style: normal;
+                font-weight: normal;
+                text-decoration: none;
+                font-size: 8pt;
+                }
+                .s2 {
+                color: #231F20;
+                font-family:Arial, sans-serif;
+                font-style: normal;
+                font-weight: normal;
+                text-decoration: none;
+                font-size: 9pt;
+                }
+                h2 {
+                color: #231F20;
+                font-family:Arial, sans-serif;
+                font-style: normal;
+                font-weight: bold;
+                text-decoration: none;
+                font-size: 10pt;
+                text-align: left;
+                }
+                .s3 {
+                color: #231F20;
+                font-family:Arial, sans-serif;
+                font-style: normal;
+                font-weight: bold;
+                text-decoration: none;
+                font-size: 8pt;
+                }
+                .s4 {
+                color: #231F20;
+                font-family:Arial, sans-serif;
+                font-style: normal;
+                font-weight: normal;
+                text-decoration: none;
+                font-size: 8pt;
+                }
+                .s5 {
+                color: #231F20;
+                font-family:Arial, sans-serif;
+                font-style: normal;
+                font-weight: normal;
+                text-decoration: none;
+                font-size: 7pt;
+                vertical-align: middle;
+                }
+                h4 {
+                color: #231F20;
+                font-family:Arial, sans-serif;
+                font-style: normal;
+                font-weight: bold;
+                text-decoration: none;
+                font-size: 7pt;
+                }
+                p {
+                color: #231F20;
+                font-family:Arial, sans-serif;
+                font-style: normal;
+                font-weight: normal;
+                text-decoration: none;
+                font-size: 7pt;
+                margin:0pt;
+                }
+                .s6 {
+                color: #231F20;
+                font-family:Arial, sans-serif;
+                font-style: normal;
+                font-weight: normal;
+                text-decoration: none;
+                font-size: 5pt;
+                }
+                tbody, thead, tfoot, tr, td, th {
+                    border: 0 none;
+                }
+                table, tbody {
+                    vertical-align: top;
+                    overflow: visible;
+                }
+                .table_header {
+                width:95%;
+                padding-top: 10px;
+                border-top-style:solid;
+                border-top-width:1pt;
+                border-top-color:#231F20;
+                border-left-style:solid;
+                border-left-width:1pt;
+                border-left-color:#231F20;
+                border-bottom-style:solid;
+                border-bottom-width:1pt;
+                border-bottom-color:#231F20;
+                border-right-style:solid;
+                border-right-width:1pt;
+                border-right-color:#231F20
+                }
+                .header_field {
+                padding-left: 10pt;
+                line-height: 14pt;
+                text-align: left;
+                }
+                .table_content {
+                width:95%;
+                border-collapse:collapse;
+                margin-top: 10px;
+                }
+                .cell_header {
+                border-top-style:solid;
+                border-top-width:1pt;
+                border-top-color:#231F20;
+                border-left-style:solid;
+                border-left-width:1pt;
+                border-left-color:#231F20;
+                border-bottom-style:solid;
+                border-bottom-width:1pt;
+                border-bottom-color:#231F20;
+                border-right-style:solid;
+                border-right-width:1pt;
+                border-right-color:#231F20;
+                background: #EEEEEE;
+                color: #231F20;
+                font-family:Arial, sans-serif;
+                font-style: normal;
+                font-weight: bold;
+                text-decoration: none;
+                font-size: 8pt;
+                padding: 10pt;
+                text-indent: 0pt;
+                text-align: center;
+                vertical-align: middle;
+                }
+                .cell_inv_line {
+                border-top-style:solid;
+                border-top-width:1pt;
+                border-top-color:#231F20;
+                border-left: none;
+                font-family:Arial, sans-serif;
+                font-style: normal;
+                font-weight: normal;
+                text-decoration: none;
+                font-size: 7pt;
+                vertical-align: middle;
+                padding: 2pt;
+                }
+                .cell_note {
+                    border-left-style:solid;
+                    border-left-width:1pt;
+                    border-right-style:solid;
+                    border-right-width:1pt;
+                    font-family:Arial, sans-serif;
+                    font-style: normal;
+                    font-weight: normal;
+                    text-decoration: none;
+                    font-size: 7pt;
+                    vertical-align: middle;
+                    padding: 2pt;
+                }
+                .cell {
+                border-top-style:solid;
+                border-top-width:1pt;
+                border-top-color:#231F20;
+                border-left-style:solid;
+                border-left-width:1pt;
+                border-left-color:#231F20;
+                border-bottom-style:solid;
+                border-bottom-width:1pt;
+                border-bottom-color:#231F20;
+                border-right-style:solid;
+                border-right-width:1pt;
+                border-right-color:#231F20;
+                font-family:Arial, sans-serif;
+                font-style: normal;
+                font-weight: normal;
+                text-decoration: none;
+                font-size: 7pt;
+                vertical-align: middle;
+                padding: 2pt;
+                }
+                .cell_center {
+                text-align: center;
+                vertical-align: middle;
+                }
+                .cell_left {
+                    text-align: left;
+                }
+                .cell_right {
+                text-align: right;
+                }
+                .link {
+                color: #231F20;
+                font-family:Arial, sans-serif;
+                font-style: normal;
+                font-weight: bold;
+                text-decoration: none;
+                font-size: 8pt;
+                }
+                .table_footer {
+                font-family:Arial, sans-serif;
+                width:95%;
+                margin-top: 10px;
+                padding-left: 8pt;
+                border-style: dotted;
+                border-width: 0.5pt;
+                border-color: #231F20;
+                }
+            </style>
+            <div class="page">
+                <div id="company_header">
+                    <table class="table_header">
+                        <tr>
+                            <td style="padding-left: 10px; padding-top: 10px; vertical-align: middle;" width="20%">
+                                <t t-set="company" t-value="o.company_id"/>
+                                <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" style="max-height: 150px;" alt="Logo"/>
+                            </td>
+                            <td style="padding-left: 10px; padding-top: 10px;" width="40%">
+                                <h1>
+                                    <t t-esc="o.company_id.name"/>
+                                </h1>
+                                <p class="s1">
+                                    <t t-raw="o.talonario_factura.selfprinter_header"/>
+                                </p>
+                            </td>
+                            <td style="padding-top: 10px;" width="40%">
+                                <p class="s2">RUC:
+                                    <t t-esc="o.company_id.partner_id.vat"/>
+                                </p>
+                                <p class="s2">Timbrado N°:
+                                    <t t-esc="o.talonario_factura.timbrado.name"/>
+                                </p>
+                                <p class="s2">Fecha de Inicio de Vigencia:
+                                    <t t-esc="o.talonario_factura.timbrado.valido_desde.strftime('%d/%m/%Y')"/>
+                                </p>
+                                <p class="s2">Fecha de Final de Vigencia:
+                                    <t t-esc="o.talonario_factura.timbrado.valido_hasta.strftime('%d/%m/%Y')"/>
+                                </p>
+                                <br/>
+                                <h2>
+                                    <t t-if="o.move_type == 'out_invoice'">
+                                        Factura
+                                    </t>
+                                    <t t-if="o.move_type == 'out_refund'">
+                                        Nota de Crédito
+                                    </t>
+                                </h2>
+                                <p class="s2">
+                                    <t t-esc="o.numeracion"/>
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                    <table class="table_header">
+                        <tr>
+                            <td>
+                                <h3 class="header_field">
+                                    Fecha y hora de emisión:
+                                    <span class="s1">
+                                        <t t-if="o.invoice_date_time_str">
+                                            <t t-esc="o.invoice_date_time_str"/>
+                                        </t>
+                                        <t t-else="">
+                                            <t t-esc="o.invoice_date.strftime('%d/%m/%Y')"/>
+                                        </t>
+                                    </span>
+                                </h3>
+                                <h3 class="header_field">
+                                    RUC/Documento de Identidad N°:
+                                    <span class="s1">
+                                        <t t-esc="o.partner_id.nro_documento"/>
+                                    </span>
+                                </h3>
+                                <h3 class="header_field">
+                                    Nombre o Razón Social:
+                                    <span class="s1">
+                                        <t t-esc="o.partner_id.name"/>
+                                    </span>
+                                </h3>
+                                <h3 class="header_field">
+                                    Dirección:
+                                    <span class="s1">
+                                        <t t-esc="o.partner_id.street"/>
+                                        <t t-if="o.partner_id.city">
+                                            <t t-esc="', ' + o.partner_id.city"/>
+                                        </t>
+                                        <t t-if="o.partner_id.state_id">
+                                            <t t-esc="', ' + o.partner_id.state_id.name"/>
+                                        </t>
+                                        <t t-if="o.partner_id.country_id">
+                                            <t t-esc="', ' + o.partner_id.country_id.name"/>
+                                        </t>
+                                    </span>
+                                </h3>
+                                <h3 class="header_field">Vencimiento de Factura:
+                                    <span class="s1">
+                                        <t t-set="due_days" t-value="0"/>
+                                        <t t-if="o.invoice_payment_term_id == 'contado'">
+                                            <t t-set="due_date" t-value="o.invoice_date"/>
+                                            <t t-esc="due_date.strftime('%d/%m/%Y')"/>
+                                        </t>
+                                        <t t-else="">
+                                            <t t-set="credit_days" t-value="sum(line.days for line in o.invoice_payment_term_id.line_ids)"/>
+                                            <t t-set="due_date" t-value="o.invoice_date + relativedelta(days=credit_days)"/>
+                                            <t t-esc="due_date.strftime('%d/%m/%Y')"/>
+                                        </t>
+                                    </span>
+                                </h3>
+                            </td>
+                            <td>
+                                <h3 class="header_field">
+                                    Condición de Venta:
+                                    <span class="s1">
+                                        <t t-if="o.invoice_payment_term_id">
+                                            <t t-if="o.invoice_payment_term_id.id == 1">Contado</t>
+                                            <t t-if="o.invoice_payment_term_id.id != 1">Crédito</t>
+                                        </t>
+                                        <t t-else="">
+                                            <t t-if="o.invoice_date != o.invoice_payment_term_id">Crédito</t>
+                                            <t t-else="">Contado</t>
+                                        </t>
+                                    </span>
+                                </h3>
+                                <h3 class="header_field">
+                                    Teléfono:
+                                    <span class="s1">
+                                        <t t-esc="o.partner_id.phone"/>
+                                    </span>
+                                </h3>
+                                <h3 class="header_field">
+                                    Correo Electrónico:
+                                    <span class="s1">
+                                        <t t-esc="o.partner_id.email"/>
+                                    </span>
+                                </h3>
+                                <t t-if="o.invoice_incoterm_id">
+                                    <h3 class="header_field">Incoterm:
+                                        <span class="s1">
+                                            <span t-esc="o.invoice_incoterm_id.name"/>
+                                        </span>
+                                    </h3>
+                                </t>
+                                <h3 class="header_field">
+                                    Moneda:
+                                    <span class="s1">
+                                        <t t-esc="o.currency_id.name"/>
+                                    </span>
+                                </h3>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div id="invoice_content">
+                    <table class="table_content" cellspacing="0">
+                        <tr style="height:24pt">
+                            <td class="cell_header" width="57pt">
+                                <span>CÓD</span>
+                            </td>
+                            <td class="cell_header" width="400pt">
+                                <span>DESCRIPCIÓN</span>
+                            </td>
+                            <td class="cell_header" width="38pt">
+                                <span>CANT.</span>
+                            </td>
+                            <td class="cell_header" width="56pt">
+                                <span>PRECIO UNITARIO</span>
+                            </td>
+                            <td class="cell_header" width="65pt">
+                                <span>EXENTA</span>
+                            </td>
+                            <td class="cell_header" width="57pt">
+                                <span>5%</span>
+                            </td>
+                            <td class="cell_header" width="57pt">
+                                <span>10%</span>
+                            </td>
+                        </tr>
+                        <t t-foreach="o.invoice_line_ids" t-as="line">
+                            <tr height="16pt">
+                                <t t-if="line.display_type == 'line_note'">
+                                    <td colspan="99" class="cell_note">
+                                        <span t-esc="line.name" t-options="{'widget': 'text'}"/>
+                                    </td>
+                                </t>
+                                <t t-else="">
+                                    <td width="57pt" class="cell_inv_line cell_center" style="border-left-style:solid; border-left-width:1pt;"><t t-esc="line.product_id.default_code"/></td>
+                                    <td width="1400pt" class="cell_inv_line cell_left"><t t-esc="line.product_id.name"/></td>
+                                    <td width="38pt" class="cell_inv_line cell_center"><span t-field="line.quantity"/></td>
+                                    <td width="56pt" class="cell_inv_line cell_right"><span class="text-nowrap" t-esc="line.price_unit * (1 - line.discount / 100)" t-options="{'widget': 'float', 'precision': 2}"/></td>
+                                    <td width="67pt" class="cell_inv_line cell_right"><t t-if="line.dTasaIVA == 0"><span class="text-nowrap" t-esc="line.price_total" t-options="{'widget': 'float', 'precision': 2}"/></t></td>
+                                    <td width="57pt" class="cell_inv_line cell_right"><t t-if="line.dTasaIVA == 5"><span class="text-nowrap" t-esc="line.price_total" t-options="{'widget': 'float', 'precision': 2}"/></t></td>
+                                    <td width="57pt" class="cell_inv_line cell_right" style="border-right-style:solid; border-right-width:1pt;"><t t-if="line.dTasaIVA == 10"><span class="text-nowrap" t-esc="line.price_total" t-options="{'widget': 'float', 'precision': 2}"/></t></td>
+                                </t>
+                            </tr>
+                        </t>
+                        <tr height="16pt">
+                            <td colspan="4" class="cell cell_left">SUBTOTAL:</td>
+                            <td width="57pt" class="cell cell_right">
+                                <t t-if="o.currency_id.name == 'PYG'">
+                                    <span class="text-nowrap" t-esc="o.amount_exempt" t-options="{'widget': 'float', 'precision': 0}"/>
+                                </t>
+                                <t t-else="">
+                                    <span class="text-nowrap" t-esc="o.amount_exempt" t-options="{'widget': 'float', 'precision': 2}"/>
+                                </t>
+                            </td>
+                            <td width="57pt" class="cell cell_right">
+                                <t t-if="o.currency_id.name == 'PYG'">
+                                    <span t-esc="o.amount_subtotal_5" t-options="{'widget': 'float', 'precision': 0}"/>
+                                </t>
+                                <t t-else="">
+                                    <span t-esc="o.amount_subtotal_5" t-options="{'widget': 'float', 'precision': 2}"/>
+                                </t>
+                            </td>
+                            <td width="40pt" class="cell cell_right">
+                                <t t-if="o.currency_id.name == 'PYG'">
+                                    <span t-esc="o.amount_subtotal_10" t-options="{'widget': 'float', 'precision': 0}"/>
+                                </t>
+                                <t t-else="">
+                                    <span t-esc="o.amount_subtotal_10" t-options="{'widget': 'float', 'precision': 2}"/>
+                                </t>
+                            </td>
+                        </tr>
+                        <tr height="16pt">
+                            <td colspan="6" class="cell cell_left">TOTAL DE LA OPERACIÓN:</td>
+                            <td width="40pt" class="cell cell_right">
+                                <t t-if="o.currency_id.name == 'PYG'">
+                                    <span class="text-nowrap" t-esc="o.amount_total" t-options="{'widget': 'float', 'precision': 0}"/>
+                                </t>
+                                <t t-else="">
+                                    <span class="text-nowrap" t-esc="o.amount_total" t-options="{'widget': 'float', 'precision': 2}"/>
+                                </t>
+
+                            </td>
+                        </tr>
+                        <tr height="16pt">
+                            <td colspan="7" class="cell cell_left">TOTAL EN LETRAS:
+                                <span t-esc="state_count.replace('Dollars','Dólares Americanos').upper()"/>
+                            </td>
+                        </tr>
+                        <tr height="16pt">
+                            <td colspan="4" class="cell cell_left">
+                                LIQUIDACIÓN IVA: (5%) <span t-esc="o.amount_iva_5_currency" t-options="{'widget': 'float', 'precision': 2}"/>
+                                (10%) <span t-esc="o.amount_iva_10_currency" t-options="{'widget': 'float', 'precision': 2}"/>
+                            </td>
+                            <td colspan="2" width="70pt" class="cell cell_right">TOTAL IVA:</td>
+                            <td width="57pt" class="cell cell_right">
+                                <span t-esc="o.amount_iva_5_currency + o.amount_iva_10_currency" t-options="{'widget': 'float', 'precision': 2}"/>
+                            </td>
+                        </tr>
+                        <t t-if="o.narration">
+                            <tr height="16pt"><td colspan="9" class="cell cell_left"/></tr>
+                            <tr height="16pt">
+                                <td colspan="8" class="cell cell_left"><span t-esc="o.narration.upper()"/></td>
+                            </tr>
+                        </t>
+                    </table>
+                </div>
+                <div style="width: 90%; padding: 8pt; font-size: 8pt; font-family: Arial, sans-serif;">
+                    <p>Aut. Autoimpresor: <t t-esc="o.talonario_factura.timbrado.autoprint_auth"/>
+                    </p>
+                </div>
+        </div>
+    </template>
+
+    <template id="report_invoice_autoprint">
+        <t t-call="web.basic_layout">
+            <t t-foreach="docs" t-as="o">
+                <t t-set="lang" t-value="es_PY"/>
+                <t t-set="print_with_payments" t-value="True"/>
+                <t t-if="o._get_name_invoice_report() == 'account.report_invoice_document'" t-call="l10n_py_selfprinter.report_invoice_document_autoprint" t-lang="es_MX"/>
+            </t>
+        </t>
+    </template>
+
+
+</data>
+</odoo>

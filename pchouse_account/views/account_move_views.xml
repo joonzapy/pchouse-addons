@@ -1,0 +1,12 @@
+<odoo>
+    <record id="view_invoice_tree_inherit_total_cost" model="ir.ui.view">
+        <field name="name">account.move.tree.total.cost</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_invoice_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='state']" position="before">
+                <field name="total_cost" string="Total de Costo"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

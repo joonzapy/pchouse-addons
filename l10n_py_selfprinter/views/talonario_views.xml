@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data>
+
+        <record id="inherit_view_talonario_form" model="ir.ui.view">
+            <field name="name">talonario_py.view.form.inherit</field>
+            <field name="model">talonario_py.talonario</field>
+            <field name="inherit_id" ref="talonario_py.form_talonario"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='numero_actual']" position="after">
+                    <field name="selfprinter_header"/>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+
+
+</odoo>

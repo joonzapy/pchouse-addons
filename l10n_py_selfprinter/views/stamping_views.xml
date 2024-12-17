@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_talonario_timbrado_form_inherited" model="ir.ui.view">
+        <field name="name">talonario_py.timbrado.form.inherited</field>
+        <field name="model">talonario_py.timbrado</field>
+        <field name="inherit_id" ref="talonario_py.form_timbrado"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='activo']" position="after">
+                <field name="autoprint_auth"/>
+            </xpath>
+            <xpath expr="//field[@name='tipo_timbrado']" position="replace">
+                <field name="stamping_type"/>
+            </xpath>
+        </field>
+    </record>
+
+
+</odoo>
