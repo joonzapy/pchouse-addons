@@ -7,7 +7,7 @@
         <field name="inherit_id" ref="account.view_account_invoice_report_pivot"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='price_subtotal']" position="after">
-                <field name="total_cost"/>
+                <field name="line_total_cost"/>
                 <field name="price_with_tax"/>
             </xpath>
         </field>
@@ -15,3 +15,4 @@
 
 
 </odoo>
+
