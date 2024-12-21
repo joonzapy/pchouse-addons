@@ -6,38 +6,51 @@ class TiendaNaranjaApi(models.Model):
     _name = 'tienda.naranja.api'
 
     name = fields.Char(string="Nombre")
-    consumer_key = fields.Char(string="Consumer Key", required=True)
-    consumer_secret = fields.Char(string="Consumer Secret", required=True)
-    token_key = fields.Char(string="Token Key", required=True)
-    token_secret = fields.Char(string="Token Secret", required=True)
+    token_key = fields.Char(string="Token Key", readonly=True)
     username = fields.Char(string="Usuario", required=True)
     password = fields.Char(string="Contraseña", required=True)
-    environment = fields.Selection([
-        ('staging', 'Staging'),
-        ('production', 'Producción')
-    ], string="Entorno", required=True, default='staging')
-    base_url = fields.Char(string="Base URL", compute="_compute_base_url")
+    base_url = fields.Char(string="Base URL")
 
-    @api.depends('environment')
-    def _compute_base_url(self):
-        for record in self:
-            record.base_url = 'https://mcstaging.tiendanaranja.com.py' if record.environment == 'staging' else 'https://tiendanaranja.com.py'
-
-    def get_access_token(self):
-        self.ensure_one()
-        url = f"{self.base_url}/rest/V1/integration/customer/token"
-        headers = {
-            'Content-Type': 'application/json',
-        }
-        payload = {
-            'username': self.token_key,
-            'password': self.token_secret,
-        }
-        response = requests.post(url, headers=headers, data=json.dumps(payload))
-        if response.status_code == 200:
-            return response.json()
-        else:
-            raise ValueError(f"Error en autenticación: {response.status_code} - {response.text}")
+    def request_token(self):
+        """
+        Solicita un token de acceso a la API de Tienda Naranja.
+        Registra el resultado en los logs.
+        :return: Token de acceso.
+        """
+        try:
+            self.ensure_one()
+            
+            # URL para el endpoint de autenticación
+            url = f"{self.base_url}/rest/V1/integration/customer/token"
+            
+            # Headers y contenido para la solicitud
+            headers = {'Content-Type': 'application/json', 'Accept': 'application/json'}
+            content = {'username': self.username, 'password': self.password}
+            
+            # Realizar la solicitud POST
+            response = requests.post(url, headers=headers, json=content)
+            
+            # Manejar errores de la respuesta
+            if response.status_code != 200:
+                raise Exception(f'Status Code: {response.status_code}, Reason: {response.reason}')
+            
+            # Extraer el token de la respuesta
+            data = response.json()
+            token = data.get('token')
+            if not token:
+                raise Exception("No se recibió un token en la respuesta.")
+            
+            self.write({'token_key': token})
+            
+            # Registrar en el log
+            self.create_log("Se obtuvo un nuevo token y se actualizó token_key", "INFO", 'request_token')
+            
+            return token
+        
+        except Exception as error:
+            # Manejo de errores
+            self.create_log(f"Error al solicitar el token: {error}", "ERROR", 'request_token')
+            raise
 
     def get_products(self, token):
         self.ensure_one()

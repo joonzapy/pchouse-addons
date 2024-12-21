@@ -7,7 +7,7 @@
         <field name="arch" type="xml">
             <form string="API">
                 <header>
-                    <button name="get_access_token" string="Obtener Token" class="oe_highlight" type="object"/>
+                    <button name="request_token" string="Obtener Token" class="oe_highlight" type="object"/>
                 </header>
 
                 <sheet>
@@ -19,12 +19,12 @@
                     </div>
                     <group>
                         <group>
-                            <field name="token_key"/>
-                        </group>
-                        <group>
-                            <field name="base_url"/>
                             <field name="username"/>
                             <field name="password" password="True"/>
+                            <field name="base_url"/>
+                        </group>
+                        <group>
+                            <field name="token_key"/>
                         </group>
                     </group>
                 </sheet>
@@ -38,23 +38,21 @@
         <field name="arch" type="xml">
             <tree string="API">
                 <field name="name"/>
-                <field name="consumer_key"/>
-                <field name="consumer_secret"/>
+                <field name="username"/>
                 <field name="token_key"/>
-                <field name="token_secret"/>
             </tree>
         </field>
     </record>
 
     <record id="api_action" model="ir.actions.act_window">
-        <field name="name">Configuracion Tienda Naranja</field>
+        <field name="name">API Tienda Naranja</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">tienda.naranja.api</field>
-        <field name="view_mode">form,tree</field>
+        <field name="view_mode">tree,form</field>
     </record>
 
     <menuitem id="menu_tienda_naranja_config"
-              parent="sale.sale_menu_root"
+              parent="sale.menu_sale_config"
               name="Tienda Naranja"
               action="api_action"
               sequence="7"
