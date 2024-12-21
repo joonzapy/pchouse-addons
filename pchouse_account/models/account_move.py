@@ -67,8 +67,8 @@ class AccountMoveLine(models.Model):
     price_with_tax = fields.Float(string="Precio con IVA", compute="_compute_price_with_tax", store=True)
     line_total_cost = fields.Monetary(
         string="Costo total",
-        compute="_compute_line_total_cost",
         store=True,
+        compute="_compute_line_total_cost",
         currency_field="currency_id"
     )
 
@@ -80,9 +80,9 @@ class AccountMoveLine(models.Model):
     @api.depends('price_subtotal', 'tax_ids')
     def _compute_price_with_tax(self):
         for line in self:
-            taxes = line.tax_ids.compute_all(
+            line.price_with_tax = line.tax_ids.compute_all(
                 line.price_unit,
                 line.move_id.currency_id,
                 line.quantity,
-                product=line.product_id)
-            line.price_with_tax = taxes['total_included']
+                product=line.product_id
+            )['total_included']
