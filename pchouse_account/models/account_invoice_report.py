@@ -4,8 +4,9 @@ from odoo import models, fields, api
 class AccountInvoiceReport(models.Model):
     _inherit = "account.invoice.report"
 
-    line_total_cost = fields.Char(string="Costo Total")
-    price_with_tax = fields.Char(string="Precio con IVA")
+    currency_id = fields.Many2one('res.currency', string="Moneda", readonly=True)
+    line_total_cost = fields.Monetary(string="Costo Total", readonly=True, currency_field='currency_id')
+    price_with_tax = fields.Monetary(string="Precio con IVA", readonly=True, currency_field='currency_id')
 
     def _select(self):
         select_str = super(AccountInvoiceReport, self)._select()
