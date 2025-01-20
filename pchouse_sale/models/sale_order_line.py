@@ -6,29 +6,29 @@ from odoo.exceptions import ValidationError
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
-    def write(self, vals):
-        res = super(SaleOrderLine, self).write(vals)
-        self._validate_price_unit()
-        return res
-    
-    @api.model
-    def create(self, vals):
-        record = super(SaleOrderLine, self).create(vals)
-        record._validate_price_unit()
-        return record
-    
-    def _validate_price_unit(self):
+
+    @api.onchange('product_id')
+    def _onchange_product_id(self):
         for line in self:
-            if self.env.user.has_group('pchouse_sale.group_allow_below_base_price'):
-            # Si el usuario pertenece al grupo, omitir la validación
-                continue
             if line.product_id:
-                tarifa_base_price = line._get_pricelist_base_price(line.product_id)
-                if line.price_unit < tarifa_base_price:
+                tarifa_base_price = self._get_pricelist_base_price(line.product_id)
+                
+                if line.price_unit and line.price_unit < tarifa_base_price:
                     raise ValidationError(
-                        f"El precio en la línea para el producto '{line.product_id.name}' "
-                        f"({line.price_unit}) no puede ser menor que el precio base ({tarifa_base_price})."
+                        f"El precio ingresado no puede ser menor que el precio base."
                     )
+
+    @api.onchange('price_unit')
+    def _onchange_price_unit(self):
+        for line in self:
+            if not self.env.user.has_group('sales_team.group_sale_manager'):
+                if line.product_id:
+                    tarifa_base_price = self._get_pricelist_base_price(line.product_id)
+                    
+                    if line.price_unit < tarifa_base_price:
+                        raise ValidationError(
+                            f"El precio ingresado no puede ser menor que el precio base."
+                        )
 
     def _get_pricelist_base_price(self, product):
         user_groups = self.env.user.groups_id
