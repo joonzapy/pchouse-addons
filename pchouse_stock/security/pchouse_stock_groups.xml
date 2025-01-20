@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Grupo de Gestión de Inventario -->
+        <record id="group_inventory_management" model="res.groups">
+            <field name="name">Gestión de Inventario</field>
+            <field name="category_id" ref="base.module_category_inventory"/>
+            <field name="comment">Usuarios responsables de gestionar el inventario.</field>
+        </record>
+    </data>
+</odoo>
