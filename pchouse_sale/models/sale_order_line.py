@@ -6,6 +6,11 @@ from odoo.exceptions import ValidationError
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
+    is_free_product = fields.Boolean(
+        string="Is Free Product",
+        related='product_id.is_free_product'
+    )
+
     def write(self, vals):
         res = super(SaleOrderLine, self).write(vals)
         self._validate_price_unit()
@@ -22,6 +27,10 @@ class SaleOrderLine(models.Model):
             if self.env.user.has_group('pchouse_sale.group_allow_below_base_price'):
             # Si el usuario pertenece al grupo, omitir la validación
                 continue
+            if line.product_id and line.product_id.is_free_product:
+            # Saltar validación si el producto está marcado como "Libre"
+                continue
+
             if line.product_id:
                 tarifa_base_price = line._get_pricelist_base_price(line.product_id)
                 if line.price_unit < tarifa_base_price:
@@ -42,4 +51,4 @@ class SaleOrderLine(models.Model):
 
         price_base = pricelist.get_product_price(product, 1.0, self.order_id.partner_id)
         
-        return price_base
+        return price_base        
