@@ -19,6 +19,12 @@
                     </div>
                     <group>
                         <group>
+                            <field name="consumer_key"/>
+                            <field name="consumer_secret"/>
+                            <field name="access_token"/>
+                            <field name="access_token_secret"/>
+                        </group>
+                        <group>
                             <field name="username"/>
                             <field name="password" password="True"/>
                             <field name="base_url"/>

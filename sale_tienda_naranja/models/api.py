@@ -1,66 +1,68 @@
 from odoo import models, fields, api
 import requests, json
+import logging
+from requests.exceptions import RequestException
+from odoo.exceptions import ValidationError
+from requests_oauthlib import OAuth1
+
+
+_logger = logging.getLogger(__name__)
+
+
 
 
 class TiendaNaranjaApi(models.Model):
     _name = 'tienda.naranja.api'
 
     name = fields.Char(string="Nombre")
+    consumer_key = fields.Char(string="Consumer Key", required=True)
+    consumer_secret = fields.Char(string="Consumer Secret", required=True)
+    access_token = fields.Char(string="Access Token", required=True)
+    access_token_secret = fields.Char(string="Access Token Secret", required=True)
     token_key = fields.Char(string="Token Key", readonly=True)
     username = fields.Char(string="Usuario", required=True)
     password = fields.Char(string="Contraseña", required=True)
     base_url = fields.Char(string="Base URL")
 
     def request_token(self):
-        """
-        Solicita un token de acceso a la API de Tienda Naranja.
-        Registra el resultado en los logs.
-        :return: Token de acceso.
-        """
+        url = f"{self.base_url}/rest/V1/integration/customer/token"
         try:
-            self.ensure_one()
-            
-            # URL para el endpoint de autenticación
-            url = f"{self.base_url}/rest/V1/integration/customer/token"
-            
-            # Headers y contenido para la solicitud
-            headers = {'Content-Type': 'application/json', 'Accept': 'application/json'}
-            content = {'username': self.username, 'password': self.password}
-            
-            # Realizar la solicitud POST
-            response = requests.post(url, headers=headers, json=content)
-            
-            # Manejar errores de la respuesta
-            if response.status_code != 200:
-                raise Exception(f'Status Code: {response.status_code}, Reason: {response.reason}')
-            
-            # Extraer el token de la respuesta
-            data = response.json()
-            token = data.get('token')
-            if not token:
-                raise Exception("No se recibió un token en la respuesta.")
-            
-            self.write({'token_key': token})
-            
-            # Registrar en el log
-            self.create_log("Se obtuvo un nuevo token y se actualizó token_key", "INFO", 'request_token')
-            
-            return token
-        
-        except Exception as error:
-            # Manejo de errores
-            self.create_log(f"Error al solicitar el token: {error}", "ERROR", 'request_token')
-            raise
 
-    def get_products(self, token):
-        self.ensure_one()
-        url = f"{self.base_url}/rest/V1/products"
-        headers = {
-            'Authorization': f'Bearer {token}',
-            'Content-Type': 'application/json',
-        }
-        response = requests.get(url, headers=headers)
-        if response.status_code == 200:
-            return response.json().get('items', [])
-        else:
-            raise ValueError(f"Error al obtener productos: {response.status_code} - {response.text}")
+            auth = OAuth1(
+                self.consumer_key,
+                self.consumer_secret,
+                self.access_token,
+                self.access_token_secret,
+                signature_method='HMAC-SHA256',
+                signature_type='auth_header'
+            )
+
+            headers = {
+                'Content-Type': 'application/json'
+            }
+            payload = {
+                'username': self.username,
+                'password': self.password
+            }
+            _logger.info(f"URL: {url}")
+            _logger.info(f"Headers: {headers}")
+            _logger.info(f"Payload: {payload}")
+
+            # Realizar la solicitud POST
+            response = requests.post(url, headers=headers, json=payload, auth=auth)
+            response.raise_for_status()
+
+            token = response.json()
+            self.token_key = token
+            return token
+
+        except RequestException as e:
+            _logger.error(f"Error al conectar con la API de Tienda Naranja: {e}")
+            _logger.error(f"Respuesta del servidor: {e.response.text if e.response else 'No hay respuesta'}")
+            raise ValidationError(f"Error al conectar con la API de Tienda Naranja: {e}")
+        except json.JSONDecodeError as e:
+            _logger.error(f"Error al decodificar la respuesta JSON: {e}")
+            raise ValidationError("La respuesta de la API no es un JSON válido.")
+        except Exception as e:
+            _logger.error(f"Error inesperado: {e}")
+            raise ValidationError(f"Error inesperado: {e}")
