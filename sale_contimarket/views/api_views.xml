@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="api_form" model="ir.ui.view">
+        <field name="name">api.form</field>
+        <field name="model">contimarket.api</field>
+        <field name="arch" type="xml">
+            <form string="API">
+                <header>
+                    <button name="make_request" string="Autenticar" class="oe_highlight" type="object"/>
+                </header>
+
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name" placeholder="Nombre de la API"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="username"/>
+                            <field name="password" password="True"/>
+                            <field name="url"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="api_tree" model="ir.ui.view">
+        <field name="name">api.tree</field>
+        <field name="model">contimarket.api</field>
+        <field name="arch" type="xml">
+            <tree string="API">
+                <field name="name"/>
+                <field name="username"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="api_action" model="ir.actions.act_window">
+        <field name="name">API ContiMarket</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">contimarket.api</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_contimarket_config"
+              parent="sale.menu_sale_config"
+              name="ContiMarket"
+              action="api_action"
+              sequence="8"
+              groups="sales_team.group_sale_manager"/>
+
+
+</odoo>
