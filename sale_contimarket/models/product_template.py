@@ -21,3 +21,39 @@ class ProductTemplate(models.Model):
             }
             products.append(product_data)
         return products
+
+        
+    def action_import_to_contimarket(self):
+        """
+        Importa los productos seleccionados a ContiMarket.
+        """
+        # Obtener la configuración de la API
+        api_config = self.env['contimarket.api'].search([], limit=1)
+        if not api_config:
+            raise models.ValidationError("No se encontró la configuración de la API de ContiMarket.")
+
+        # Preparar los datos de los productos
+        products = self.prepare_product_data()
+
+        # Llamar al método de importación
+        try:
+            response = api_config.import_products(products)
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': 'Importación exitosa',
+                    'message': f"Productos importados correctamente: {response}",
+                    'sticky': False,
+                }
+            }
+        except models.ValidationError as e:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': 'Error en la importación',
+                    'message': str(e),
+                    'sticky': True,
+                }
+            }

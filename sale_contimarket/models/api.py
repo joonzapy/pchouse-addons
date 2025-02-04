@@ -23,7 +23,7 @@ class ContiMarketAPI(models.Model):
 
     def make_request(self, endpoint, method='GET', data=None):
         """Realiza una solicitud HTTP a la API de ContiMarket."""
-        url = f"{self.api_url}/{endpoint}"
+        url = f"{self.url}/{endpoint}"
         headers = self._get_auth_header()
 
         try:
