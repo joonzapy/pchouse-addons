@@ -23,6 +23,9 @@
                             <field name="password" password="True"/>
                             <field name="url"/>
                         </group>
+                        <group>
+                            <field name="product_ids" widget="many2many_tags"/>
+                        </group>
                     </group>
                 </sheet>
             </form>

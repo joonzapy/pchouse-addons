@@ -10,7 +10,7 @@ class ProductTemplate(models.Model):
         :return: Lista de diccionarios con la estructura de productos.
         """
         products = []
-        for product in self:
+        for product in self.product_ids:
             product_data = {
                 'CodigoProducto': product.default_code or '',
                 'Nombre': product.name,

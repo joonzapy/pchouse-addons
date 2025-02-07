@@ -14,6 +14,7 @@ class ContiMarketAPI(models.Model):
     url = fields.Char(string='URL', required=True)
     username = fields.Char(string='Username', required=True)
     password = fields.Char(string='Password', required=True)
+    product_ids = fields.Many2many('product.template', string="Productos a Importar")
 
     def _get_auth_header(self):
         """Genera la cabecera de autenticación Basic."""
