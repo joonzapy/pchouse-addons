@@ -23,6 +23,11 @@ class SaleOrderLine(models.Model):
             # Si el usuario pertenece al grupo, omitir la validación
                 continue
             if line.product_id:
+                partner_pricelist = line.order_id.partner_id.property_product_pricelist
+                if partner_pricelist and partner_pricelist.id != 28:
+                    # Si el cliente tiene una tarifa especial asignada, se usa sin restricciones
+                    return
+                # Si el cliente no tiene una tarifa especial, aplicar la tarifa por grupo del vendedor
                 tarifa_base_price = line._get_pricelist_base_price(line.product_id)
                 if line.price_unit < tarifa_base_price:
                     raise ValidationError(
