@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-
     <record id="api_form" model="ir.ui.view">
         <field name="name">api.form</field>
         <field name="model">contimarket.api</field>
         <field name="arch" type="xml">
             <form string="API">
                 <header>
-                    <button name="make_request" string="Autenticar" class="oe_highlight" type="object"/>
+                    <button name="import_products" string="Importar productos" class="oe_highlight" type="object"/>
                 </header>
 
                 <sheet>
@@ -50,12 +49,10 @@
         <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem id="menu_contimarket_config"
+    <menuitem id="menu_contimarket"
               parent="sale.menu_sale_config"
-              name="ContiMarket"
+              name="Contimarket"
               action="api_action"
-              sequence="8"
-              groups="sales_team.group_sale_manager"/>
-
+              sequence="9"/>
 
 </odoo>
